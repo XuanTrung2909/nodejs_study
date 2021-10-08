@@ -6,12 +6,16 @@ const {
     deleteUser,
     updateUser,
     uploadAvatar,
+    getMovieByUser,
 } = require("../Controllers/UserController");
 const {
     authenticate,
     authorize,
 } = require("../middlewares/auth/verify-token.middleware");
 const { logUser } = require("../middlewares/logs/logs.user.middleware");
+const {
+    uploadImageSingle,
+} = require("../middlewares/upload/upload-imgage.middleware");
 const {
     checkExit,
 } = require("../middlewares/validations/check-exit.middleware");
@@ -35,9 +39,11 @@ userRouter.put("/:id", updateUser);
 userRouter.post(
     "/upload-avatar",
     authenticate,
-    authorize(["ADMIN", "SUPER_ADMIN"]),
+    uploadImageSingle("avatar"),
     uploadAvatar
 );
+
+userRouter.get("/movie-by-user/:id", getMovieByUser);
 
 module.exports = {
     userRouter,

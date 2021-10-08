@@ -4,6 +4,21 @@ const { rootRouter } = require("./src/Routers/RootRouter");
 
 const app = express();
 
+//setup graphql
+
+const { graphqlHTTP } = require("express-graphql");
+const { graphqlSchema } = require("./src/graphql/schema");
+const { graphqlResolver } = require("./src/graphql/resolvers");
+
+app.use(
+    "/graphql",
+    graphqlHTTP({
+        schema: graphqlSchema,
+        rootValue: graphqlResolver,
+        graphiql: true, //bat tool len de dung
+    })
+);
+
 //setup statuc file
 
 const publicPathDirectory = path.join(__dirname, "./public");

@@ -19,7 +19,7 @@ const signIn = async (req, res) => {
 
         if (userSignIn) {
             console.log("check");
-            const isCheckPassword = bcryptjs.compare(
+            const isCheckPassword = bcryptjs.compareSync(
                 password,
                 userSignIn.password
             );

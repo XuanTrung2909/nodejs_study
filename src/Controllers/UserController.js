@@ -1,5 +1,6 @@
 const { users } = require("../models");
 const bcryptjs = require("bcryptjs");
+const { sequelize } = require("../models");
 
 const createUser = async (req, res) => {
     try {
@@ -75,8 +76,37 @@ const updateUser = async (req, res) => {
     }
 };
 
-const uploadAvatar = (req, res) => {
-    res.send("da upload avatar thanh cong");
+const uploadAvatar = async (req, res) => {
+    try {
+        const { file, user } = req;
+        const urlImage = `http://localhost:9000/${file.path}`;
+        const userUploadAvatar = await users.findByPk(user.id);
+        userUploadAvatar.avatar = urlImage;
+
+        res.send(userUploadAvatar);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
+const getMovieByUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const queryString = `
+            select movies.name as movieName, users.name as userName from movies
+            inner join tickets
+            on movies.id = tickets.movieId
+            inner join users
+            on users.id = tickets.userId
+            where users.id = ${id};
+        `;
+
+        const [result] = await sequelize.query(queryString);
+
+        res.send(result);
+    } catch (error) {
+        res.status(500).send(error);
+    }
 };
 
 module.exports = {
@@ -86,4 +116,5 @@ module.exports = {
     deleteUser,
     updateUser,
     uploadAvatar,
+    getMovieByUser,
 };
